@@ -1,0 +1,10 @@
+const mongoose = require("mongoose");
+
+const appointmentSchema = new mongoose.Schema({
+    petName: { type: String, required: true },
+    date: { type: Date, required: true },
+    reason: { type: String, required: true },
+    vetName: { type: String, required: true },
+})
+
+    module.exports = mongoose.model("Appointment", appointmentSchema);
