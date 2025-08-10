@@ -5,7 +5,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Tasks from './pages/Tasks';
 import Pets from "./pages/Pets";
-import Appointments from './pages/Appointments';  
+import Appointments from './pages/Appointments';
 
 
 function App() {
