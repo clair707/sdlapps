@@ -1,7 +1,7 @@
 const Pet = require('../models/Pet');
 
 //create
-exports.createPet = async (req, res) => {
+const createPet = async (req, res) => {
     try {
         const pet = new Pet(req.body);
         const savePet = await pet.save();
@@ -12,7 +12,7 @@ exports.createPet = async (req, res) => {
 };
 
 //Read all
-exports.getAllPets = async (req, res) => {
+const getAllPets = async (req, res) => {
     try {
         const pets = await Pet.find();
         res.status(200).json(pets);
@@ -22,7 +22,7 @@ exports.getAllPets = async (req, res) => {
 };
 
 //Read one
-exports.getPetById = async (req, res) => {
+const getPetById = async (req, res) => {
     try {
         const pet = await Pet.findById(req.params.id);
         if (!pet) return res.status(404).json({ message: 'Pet not found' });
@@ -33,7 +33,7 @@ exports.getPetById = async (req, res) => {
 }
 
 //Update
-exports.updatePet = async (req, res) => {
+const updatePet = async (req, res) => {
     try {
         const updatedPet = await Pet.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.status(200).json(updatedPet);
@@ -43,7 +43,7 @@ exports.updatePet = async (req, res) => {
 };
 
 //Delete
-exports.deletePet = async (req, res) => {
+const deletePet = async (req, res) => {
     try {
         await Pet.findByIdAndDelete(req.params.id);
         res.status(200).json({ success: true, message: 'Pet deleted successfully' });
@@ -52,4 +52,10 @@ exports.deletePet = async (req, res) => {
     }
 };
 
-
+module.exports = {
+    createPet,
+    getAllPets,
+    getPetById,
+    updatePet,
+    deletePet
+};
