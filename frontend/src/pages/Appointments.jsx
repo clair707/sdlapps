@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../api/axios"; // use the axios instance (step 1)
-// If you skip step 1, replace `api` with `axios` and import axios directly.
+import axios from 'axios'; 
 
 const Appointments = () => {
   // List state
@@ -27,7 +26,7 @@ const Appointments = () => {
 
   const fetchPets = async () => {
     try {
-      const res = await api.get("/api/pets");
+    const res = await axios.get("/api/pets");
       setPets(res.data || []);
     } catch (error) {
       console.error("Error fetching pets:", error);
@@ -38,7 +37,7 @@ const Appointments = () => {
   const fetchAppointments = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/api/appointments");
+      const res = await axios.get("/api/appointments");      
       // sort by datetime desc (newest first)
       const sorted = (res.data || []).sort(
         (a, b) => new Date(b.datetime) - new Date(a.datetime)
