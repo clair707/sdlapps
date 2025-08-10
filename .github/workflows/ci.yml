@@ -78,3 +78,6 @@ jobs:
     - run: pm2 start all || true
 
     - run: pm2 restart all --update-env || true
+
+    - name: Restart Services
+    run: pm2 reload all --update-env  
