@@ -1,0 +1,714 @@
+From 87845e3344ee870ae1620cc7343c2c4d1feb0be9 Mon Sep 17 00:00:00 2001
+From: Clair <clairxzz@hotmail.com>
+Date: Thu, 7 Aug 2025 01:13:03 +1000
+Subject: [PATCH] Implement CRUD for Pet & Appointment features with tests
+
+---
+ backend/controllers/appointmentController.js |  53 ++++
+ backend/controllers/petController.js         |  55 ++++
+ backend/models/Appointment.js                |  10 +
+ backend/models/Pet.js                        |  12 +
+ backend/routes/appointmentRoutes.js          |  11 +
+ backend/routes/petRoutes.js                  |  12 +
+ backend/server.js                            |   2 +-
+ backend/test/appointment.test.js             |  70 +++++
+ backend/test/example_test 2.js               | 301 +++++++++++++++++++
+ backend/test/pet.test.js                     |  89 ++++++
+ 10 files changed, 614 insertions(+), 1 deletion(-)
+ create mode 100644 backend/controllers/appointmentController.js
+ create mode 100644 backend/controllers/petController.js
+ create mode 100644 backend/models/Appointment.js
+ create mode 100644 backend/models/Pet.js
+ create mode 100644 backend/routes/appointmentRoutes.js
+ create mode 100644 backend/routes/petRoutes.js
+ create mode 100644 backend/test/appointment.test.js
+ create mode 100644 backend/test/example_test 2.js
+ create mode 100644 backend/test/pet.test.js
+
+diff --git a/backend/controllers/appointmentController.js b/backend/controllers/appointmentController.js
+new file mode 100644
+index 0000000..b267148
+--- /dev/null
++++ b/backend/controllers/appointmentController.js
+@@ -0,0 +1,53 @@
++const Appointment = require("../models/Appointment");
++
++//Create
++exports.createAppointment = async (req, res) => {
++    try {
++        const appointment = new Appointment(req.body);
++        const savedAppointment = await appointment.save();
++        res.status(201).json(savedAppointment);
++    } catch (error) {
++        res.status(400).json({ error: error.message });
++    }
++}; 
++
++//Read all
++exports.getAllAppointments = async (req, res) => {
++    try {
++        const appointments = await Appointment.find();
++        res.status(200).json(appointments);
++    } catch (error) {
++        res.status(500).json({ error: error.message });
++    }
++};
++
++//Read one
++exports.getAllAppointmentById = async (req, res) => {
++    try {
++        const appointment = await Appointment.findById(req.params.id);
++        if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
++        res.status(200).json(appointment);
++    } catch (error) {
++        res.status(500).json({ error: error.message });
++    }
++};
++
++//Update
++exports.updateAppointment = async (req, res) => {
++    try {
++        const updatedAppointment = await Appointment.findByIdAndUpdate(req.params.id, req.body, { new: true });
++        res.status(200).json(updatedAppointment);
++    } catch (error) {
++        res.status(400).json({ error: error.message });
++    }
++};
++
++//Delete
++exports.deleteAppointment = async (req, res) => {
++    try {
++        await Appointment.findByIdAndDelete(req.params.id);
++        res.status(200).json({ message: 'Appointment deleted successfully' });
++    } catch (error) {
++        res.status(500).json({ error: error.message });
++    }
++}
+\ No newline at end of file
+diff --git a/backend/controllers/petController.js b/backend/controllers/petController.js
+new file mode 100644
+index 0000000..9f3ecd3
+--- /dev/null
++++ b/backend/controllers/petController.js
+@@ -0,0 +1,55 @@
++const Pet = require('../models/Pet');
++
++//create
++exports.createPet = async (req, res) => {
++    try {
++        const pet = new Pet(req.body);
++        const savePet = await pet.save();
++        res.status(201).json(savePet);
++    } catch (error) {
++        res.status(400).json({ error: error.message });
++    }
++};
++
++//Read all
++exports.getAllPets = async (req, res) => {
++    try {
++        const pets = await Pet.find();
++        res.status(200).json(pets);
++    } catch (error) {
++        res.status(500).json({ error: error.message });
++    }
++};
++
++//Read one
++exports.getPetById = async (req, res) => {
++    try {
++        const pet = await Pet.findById(req.params.id);
++        if (!pet) return res.status(404).json({ message: 'Pet not found' });
++        res.status(200).json(pet);
++    } catch (error) {
++        res.status(500).json({ error: error.message });
++    }
++}
++
++//Update
++exports.updatePet = async (req, res) => {
++    try {
++        const updatedPet = await Pet.findByIdAndUpdate(req.params.id, req.body, { new: true });
++        res.status(200).json(updatedPet);
++    } catch (error) {
++        res.status(400).json({ error: error.message });
++    }
++};
++
++//Delete
++exports.deletePet = async (req, res) => {
++    try {
++        await Pet.findByIdAndDelete(req.params.id);
++        res.status(200).json({ success: true, message: 'Pet deleted successfully' });
++    } catch (error) {
++        res.status(500).json({ success: false, error: error.message });
++    }
++};
++
++
+diff --git a/backend/models/Appointment.js b/backend/models/Appointment.js
+new file mode 100644
+index 0000000..78392ff
+--- /dev/null
++++ b/backend/models/Appointment.js
+@@ -0,0 +1,10 @@
++const mongoose = require("mongoose");
++
++const appointmentSchema = new mongoose.Schema({
++    petName: { type: String, required: true },
++    date: { type: Date, required: true },
++    reason: { type: String, required: true },
++    vetName: { type: String, required: true },
++})
++
++    module.exports = mongoose.model("Appointment", appointmentSchema);
+\ No newline at end of file
+diff --git a/backend/models/Pet.js b/backend/models/Pet.js
+new file mode 100644
+index 0000000..06e9272
+--- /dev/null
++++ b/backend/models/Pet.js
+@@ -0,0 +1,12 @@
++const mongoose = require('mongoose');
++
++const petSchema = new mongoose.Schema({
++    name: { type: String, required: true,},
++    species: { type: String, required: true },
++    age: { type: Number, required: true },
++    ownerName: { type: String, required: true },
++    ownerContact: { type: String, required: true },
++});
++
++module.exports = mongoose.model("Pet", petSchema);
++
+diff --git a/backend/routes/appointmentRoutes.js b/backend/routes/appointmentRoutes.js
+new file mode 100644
+index 0000000..6065c60
+--- /dev/null
++++ b/backend/routes/appointmentRoutes.js
+@@ -0,0 +1,11 @@
++const express = require('express');
++const router = express.Router();
++const controller = require('../controllers/appointmentController');
++
++router.post('/', controller.createAppointment);
++router.get('/', controller.getAllAppointments);
++router.get('/:id', controller.getAppointmentById);
++router.put('/:id', controller.updateAppointment);
++router.delete('/:id', controller.deleteAppointment);
++
++module.exports = router;
+\ No newline at end of file
+diff --git a/backend/routes/petRoutes.js b/backend/routes/petRoutes.js
+new file mode 100644
+index 0000000..4a79149
+--- /dev/null
++++ b/backend/routes/petRoutes.js
+@@ -0,0 +1,12 @@
++const express = require("express");
++const router = express.Router();
++const petController = require("../controllers/petController");
++
++router.post("/", petController.createPet);
++router.get("/", petController.getAllPets);
++router.get("/:id", petController.getPetById);
++router.put("/:id", petController.updatePet);
++router.delete("/:id", petController.deletePet);
++
++module.exports = router;
++
+diff --git a/backend/server.js b/backend/server.js
+index f4aae4b..5114f94 100644
+--- a/backend/server.js
++++ b/backend/server.js
+@@ -12,7 +12,7 @@ const app = express();
+ app.use(cors());
+ app.use(express.json());
+ app.use('/api/auth', require('./routes/authRoutes'));
+-//app.use('/api/tasks', require('./routes/taskRoutes'));
++app.use('/api/pets', require('./routes/petRoutes'));
+ 
+ // Export the app object for testing
+ if (require.main === module) {
+diff --git a/backend/test/appointment.test.js b/backend/test/appointment.test.js
+new file mode 100644
+index 0000000..2c499c3
+--- /dev/null
++++ b/backend/test/appointment.test.js
+@@ -0,0 +1,70 @@
++const sinon = require('sinon');
++const mongoose = require('mongoose');
++const { expect } = require('chai');
++
++const Appointment = require('../models/Appointment');
++const { createAppointment, getAllAppointments, updateAppointment, deleteAppointment } = require('../controllers/appointmentController');
++
++describe('Appointment Controller Tests', () => {
++    afterEach(() => {
++        sinon.restore();
++    });
++
++    it('should create a new appointment successfully', async () => {
++        const req = {
++            body: {
++                petName: 'Boba',
++                date: '2025-12-31',
++                reason: 'Checkup',
++                vetName: 'Dr. Smith'
++            }
++        };
++
++        const saved = { _id: new mongoose.Types.ObjectId(), ...req.body };
++        sinon.stub(Appointment.prototype, 'save').resolves(saved);
++
++        const res = {
++            status: sinon.stub().returnsThis(),
++            json: sinon.spy()
++        };
++        await createAppointment(req, res);
++
++        expect(res.status.calledWith(201)).to.be.true;
++        expect(res.json.calledWith(saved)).to.be.true;
++    });
++
++    it('should return all appointments', async () => {
++        const mockAppointments = [{ petName: 'Boba' }, { petName: 'Luna' }];
++        sinon.stub(Appointment, 'find').resolves(mockAppointments);
++
++        const req = {};
++        const res = {
++            status: sinon.stub().returnsThis(),
++            json: sinon.spy()
++        };
++        await getAllAppointments(req, res);
++
++        expect(res.status.calledWith(200)).to.be.true;
++        expect(res.json.calledWith(mockAppointments)).to.be.true;
++    }
++    );
++
++    it('should update an appointment successfully', async () => {
++        const req = {
++            params: { id: '456' }, 
++            body: { reason: 'Updated Reason' }
++        };
++        const updated = { _id: '456', reason: 'Updated Reason' };
++        sinon.stub(Appointment, 'findByIdAndUpdate').resolves(updated);
++        
++        const res = {
++            status: sinon.stub().returnsThis(),
++            json: sinon.spy()
++        };
++
++        await updateAppointment(req, res);
++
++        expect(res.status.calledWith(200)).to.be.true;
++        expect(res.json.calledWith(updated)).to.be.true;
++    });
++});
+diff --git a/backend/test/example_test 2.js b/backend/test/example_test 2.js
+new file mode 100644
+index 0000000..3e88758
+--- /dev/null
++++ b/backend/test/example_test 2.js	
+@@ -0,0 +1,301 @@
++
++const chai = require('chai');
++const chaiHttp = require('chai-http');
++const http = require('http');
++const app = require('../server'); 
++const connectDB = require('../config/db');
++const mongoose = require('mongoose');
++const sinon = require('sinon');
++const Task = require('../models/Task');
++const { updateTask,getTasks,addTask,deleteTask } = require('../controllers/taskController');
++const { expect } = chai;
++
++chai.use(chaiHttp);
++let server;
++let port;
++
++
++describe('AddTask Function Test', () => {
++
++  it('should create a new task successfully', async () => {
++    // Mock request data
++    const req = {
++      user: { id: new mongoose.Types.ObjectId() },
++      body: { title: "New Task", description: "Task description", deadline: "2025-12-31" }
++    };
++
++    // Mock task that would be created
++    const createdTask = { _id: new mongoose.Types.ObjectId(), ...req.body, userId: req.user.id };
++
++    // Stub Task.create to return the createdTask
++    const createStub = sinon.stub(Task, 'create').resolves(createdTask);
++
++    // Mock response object
++    const res = {
++      status: sinon.stub().returnsThis(),
++      json: sinon.spy()
++    };
++
++    // Call function
++    await addTask(req, res);
++
++    // Assertions
++    expect(createStub.calledOnceWith({ userId: req.user.id, ...req.body })).to.be.true;
++    expect(res.status.calledWith(201)).to.be.true;
++    expect(res.json.calledWith(createdTask)).to.be.true;
++
++    // Restore stubbed methods
++    createStub.restore();
++  });
++
++  it('should return 500 if an error occurs', async () => {
++    // Stub Task.create to throw an error
++    const createStub = sinon.stub(Task, 'create').throws(new Error('DB Error'));
++
++    // Mock request data
++    const req = {
++      user: { id: new mongoose.Types.ObjectId() },
++      body: { title: "New Task", description: "Task description", deadline: "2025-12-31" }
++    };
++
++    // Mock response object
++    const res = {
++      status: sinon.stub().returnsThis(),
++      json: sinon.spy()
++    };
++
++    // Call function
++    await addTask(req, res);
++
++    // Assertions
++    expect(res.status.calledWith(500)).to.be.true;
++    expect(res.json.calledWithMatch({ message: 'DB Error' })).to.be.true;
++
++    // Restore stubbed methods
++    createStub.restore();
++  });
++
++});
++
++
++describe('Update Function Test', () => {
++
++  it('should update task successfully', async () => {
++    // Mock task data
++    const taskId = new mongoose.Types.ObjectId();
++    const existingTask = {
++      _id: taskId,
++      title: "Old Task",
++      description: "Old Description",
++      completed: false,
++      deadline: new Date(),
++      save: sinon.stub().resolvesThis(), // Mock save method
++    };
++    // Stub Task.findById to return mock task
++    const findByIdStub = sinon.stub(Task, 'findById').resolves(existingTask);
++
++    // Mock request & response
++    const req = {
++      params: { id: taskId },
++      body: { title: "New Task", completed: true }
++    };
++    const res = {
++      json: sinon.spy(), 
++      status: sinon.stub().returnsThis()
++    };
++
++    // Call function
++    await updateTask(req, res);
++
++    // Assertions
++    expect(existingTask.title).to.equal("New Task");
++    expect(existingTask.completed).to.equal(true);
++    expect(res.status.called).to.be.false; // No error status should be set
++    expect(res.json.calledOnce).to.be.true;
++
++    // Restore stubbed methods
++    findByIdStub.restore();
++  });
++
++
++
++  it('should return 404 if task is not found', async () => {
++    const findByIdStub = sinon.stub(Task, 'findById').resolves(null);
++
++    const req = { params: { id: new mongoose.Types.ObjectId() }, body: {} };
++    const res = {
++      status: sinon.stub().returnsThis(),
++      json: sinon.spy()
++    };
++
++    await updateTask(req, res);
++
++    expect(res.status.calledWith(404)).to.be.true;
++    expect(res.json.calledWith({ message: 'Task not found' })).to.be.true;
++
++    findByIdStub.restore();
++  });
++
++  it('should return 500 on error', async () => {
++    const findByIdStub = sinon.stub(Task, 'findById').throws(new Error('DB Error'));
++
++    const req = { params: { id: new mongoose.Types.ObjectId() }, body: {} };
++    const res = {
++      status: sinon.stub().returnsThis(),
++      json: sinon.spy()
++    };
++
++    await updateTask(req, res);
++
++    expect(res.status.calledWith(500)).to.be.true;
++    expect(res.json.called).to.be.true;
++
++    findByIdStub.restore();
++  });
++
++
++
++});
++
++
++
++describe('GetTask Function Test', () => {
++
++  it('should return tasks for the given user', async () => {
++    // Mock user ID
++    const userId = new mongoose.Types.ObjectId();
++
++    // Mock task data
++    const tasks = [
++      { _id: new mongoose.Types.ObjectId(), title: "Task 1", userId },
++      { _id: new mongoose.Types.ObjectId(), title: "Task 2", userId }
++    ];
++
++    // Stub Task.find to return mock tasks
++    const findStub = sinon.stub(Task, 'find').resolves(tasks);
++
++    // Mock request & response
++    const req = { user: { id: userId } };
++    const res = {
++      json: sinon.spy(),
++      status: sinon.stub().returnsThis()
++    };
++
++    // Call function
++    await getTasks(req, res);
++
++    // Assertions
++    expect(findStub.calledOnceWith({ userId })).to.be.true;
++    expect(res.json.calledWith(tasks)).to.be.true;
++    expect(res.status.called).to.be.false; // No error status should be set
++
++    // Restore stubbed methods
++    findStub.restore();
++  });
++
++  it('should return 500 on error', async () => {
++    // Stub Task.find to throw an error
++    const findStub = sinon.stub(Task, 'find').throws(new Error('DB Error'));
++
++    // Mock request & response
++    const req = { user: { id: new mongoose.Types.ObjectId() } };
++    const res = {
++      json: sinon.spy(),
++      status: sinon.stub().returnsThis()
++    };
++
++    // Call function
++    await getTasks(req, res);
++
++    // Assertions
++    expect(res.status.calledWith(500)).to.be.true;
++    expect(res.json.calledWithMatch({ message: 'DB Error' })).to.be.true;
++
++    // Restore stubbed methods
++    findStub.restore();
++  });
++
++});
++
++
++
++describe('DeleteTask Function Test', () => {
++
++  it('should delete a task successfully', async () => {
++    // Mock request data
++    const req = { params: { id: new mongoose.Types.ObjectId().toString() } };
++
++    // Mock task found in the database
++    const task = { remove: sinon.stub().resolves() };
++
++    // Stub Task.findById to return the mock task
++    const findByIdStub = sinon.stub(Task, 'findById').resolves(task);
++
++    // Mock response object
++    const res = {
++      status: sinon.stub().returnsThis(),
++      json: sinon.spy()
++    };
++
++    // Call function
++    await deleteTask(req, res);
++
++    // Assertions
++    expect(findByIdStub.calledOnceWith(req.params.id)).to.be.true;
++    expect(task.remove.calledOnce).to.be.true;
++    expect(res.json.calledWith({ message: 'Task deleted' })).to.be.true;
++
++    // Restore stubbed methods
++    findByIdStub.restore();
++  });
++
++  it('should return 404 if task is not found', async () => {
++    // Stub Task.findById to return null
++    const findByIdStub = sinon.stub(Task, 'findById').resolves(null);
++
++    // Mock request data
++    const req = { params: { id: new mongoose.Types.ObjectId().toString() } };
++
++    // Mock response object
++    const res = {
++      status: sinon.stub().returnsThis(),
++      json: sinon.spy()
++    };
++
++    // Call function
++    await deleteTask(req, res);
++
++    // Assertions
++    expect(findByIdStub.calledOnceWith(req.params.id)).to.be.true;
++    expect(res.status.calledWith(404)).to.be.true;
++    expect(res.json.calledWith({ message: 'Task not found' })).to.be.true;
++
++    // Restore stubbed methods
++    findByIdStub.restore();
++  });
++
++  it('should return 500 if an error occurs', async () => {
++    // Stub Task.findById to throw an error
++    const findByIdStub = sinon.stub(Task, 'findById').throws(new Error('DB Error'));
++
++    // Mock request data
++    const req = { params: { id: new mongoose.Types.ObjectId().toString() } };
++
++    // Mock response object
++    const res = {
++      status: sinon.stub().returnsThis(),
++      json: sinon.spy()
++    };
++
++    // Call function
++    await deleteTask(req, res);
++
++    // Assertions
++    expect(res.status.calledWith(500)).to.be.true;
++    expect(res.json.calledWithMatch({ message: 'DB Error' })).to.be.true;
++
++    // Restore stubbed methods
++    findByIdStub.restore();
++  });
++
++});
+\ No newline at end of file
+diff --git a/backend/test/pet.test.js b/backend/test/pet.test.js
+new file mode 100644
+index 0000000..be705dd
+--- /dev/null
++++ b/backend/test/pet.test.js
+@@ -0,0 +1,89 @@
++const sinon = require('sinon');
++const mongoose = require('mongoose');
++const { expect } = require('chai');
++
++const Pet = require('../models/Pet');
++const { createPet, getAllPets, updatePet, deletePet } = require('../controllers/petController');
++
++describe('Pet Controller Tests', () => {
++    afterEach(() => {
++        sinon.restore();
++    }
++    );
++
++    it('should create a new pet successfully', async () => {
++        const req = {
++            body: {
++                name: 'Boba',
++                species: 'Dog',
++                age: 3,
++                ownerName: 'John Doe',
++                ownerContact: '1234567890'
++            }
++        };
++
++        const savedPet = { _id: new mongoose.Types.ObjectId(), ...req.body };
++        sinon.stub(Pet.prototype, 'save').resolves(savedPet);
++
++        const res = {
++            status: sinon.stub().returnsThis(),
++            json: sinon.spy()
++        };
++
++        await createPet(req, res);
++
++        expect(res.status.calledWith(201)).to.be.true;
++        expect(res.json.calledWith(savedPet)).to.be.true;
++    });
++
++    it('should return all pets', async () => {
++        const mockPets = [{name: 'Boba' }, { name: 'Luna' }];
++        sinon.stub(Pet, 'find').resolves(mockPets);
++
++        const req = {};
++        const res = {
++            status: sinon.stub().returnsThis(),
++            json: sinon.spy()
++        };
++        await getAllPets(req, res);
++
++        expect(res.status.calledWith(200)).to.be.true;
++        expect(res.json.calledWith(mockPets)).to.be.true;
++    });
++
++    it('should update a pet successfully', async () => {
++        const req = {
++            params: { id: '123', },
++            body: { name: 'UpdateName' }
++        };
++
++            const updatedPet = { _id: '123', name: 'UpdateName' };
++            sinon.stub(Pet, 'findByIdAndUpdate').resolves(updatedPet);
++
++            const res = {
++                status: sinon.stub().returnsThis(),
++                json: sinon.spy()
++            };
++            await updatePet(req, res);
++
++            expect(res.status.calledWith(200)).to.be.true;
++            expect(res.json.calledWith(updatedPet)).to.be.true;
++        });
++
++    it('should delete a pet successfully', async () => {
++        const req = { params: { id: '123' } };
++        const deletedPet = { _id: '123', name: 'Boba' };
++
++        sinon.stub(Pet, 'findByIdAndDelete').resolves(deletedPet);
++
++        const res = {
++            status: sinon.stub().returnsThis(),
++            json: sinon.spy()
++        };
++
++        await deletePet(req, res);
++
++        expect(res.status.calledWith(200)).to.be.true;
++        expect(res.json.calledWith(sinon.match({ success: true }))).to.be.true;
++    });
++});
+-- 
+2.39.5 (Apple Git-154)
+

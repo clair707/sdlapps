@@ -19,7 +19,6 @@ function App() {
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/pets" element={<Pets />} />
         <Route path="/appointments" element={<Appointments />} />
-
       </Routes>
     </Router>
   );
