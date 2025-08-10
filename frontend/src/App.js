@@ -4,7 +4,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Tasks from './pages/Tasks';
-import Pets from "./pages/Pets";
+import Pets from "./pages/Pets";  
+
 
 function App() {
   return (
