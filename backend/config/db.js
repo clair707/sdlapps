@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 let isConnected = false; // Track if already connected
 
 // Set strictQuery explicitly to suppress the warning
-//mongoose.set('strictQuery', true);
+mongoose.set('strictQuery', true);
 
   // Print the current Mongo URI for debugginggit status
   console.log("Using MONGO_URI:", process.env.MONGO_URI);
