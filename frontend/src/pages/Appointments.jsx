@@ -1,26 +1,31 @@
 import { useEffect, useState } from "react";
-import api from "../api/axios"; // use the axios instance (step 1)
-// If you skip step 1, replace `api` with `axios` and import axios directly.
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || "/",
+});
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 const Appointments = () => {
-  // List state
   const [appointments, setAppointments] = useState([]);
   const [pets, setPets] = useState([]);
 
-  // Form state
   const [form, setForm] = useState({
     petId: "",
-    datetime: "", // bound to <input type="datetime-local">
+    datetime: "", 
     reason: "",
     notes: "",
-    status: "Scheduled", // Scheduled | Completed | Cancelled
+    status: "Scheduled", 
   });
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    // Load both pets (for dropdown) and appointments
     fetchPets();
     fetchAppointments();
   }, []);
@@ -39,7 +44,6 @@ const Appointments = () => {
     try {
       setLoading(true);
       const res = await api.get("/api/appointments");
-      // sort by datetime desc (newest first)
       const sorted = (res.data || []).sort(
         (a, b) => new Date(b.datetime) - new Date(a.datetime)
       );
@@ -56,7 +60,6 @@ const Appointments = () => {
     dtLocal ? new Date(dtLocal).toISOString() : "";
 
   const toLocalDatetimeValue = (isoString) => {
-    // Convert ISO -> "YYYY-MM-DDTHH:MM" for <input type="datetime-local">
     if (!isoString) return "";
     const d = new Date(isoString);
     const pad = (n) => String(n).padStart(2, "0");
@@ -72,7 +75,6 @@ const Appointments = () => {
     e.preventDefault();
     setErrorMsg("");
 
-    // Basic validation
     if (!form.petId) return setErrorMsg("Please select a pet.");
     if (!form.datetime) return setErrorMsg("Please pick a date & time.");
 
