@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "/",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
 });
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
@@ -32,7 +32,7 @@ const Appointments = () => {
 
   const fetchPets = async () => {
     try {
-    const res = await axios.get("/api/pets");
+    const res = await api.get("/pets");
       setPets(res.data || []);
     } catch (error) {
       console.error("Error fetching pets:", error);
@@ -43,7 +43,7 @@ const Appointments = () => {
   const fetchAppointments = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/api/appointments");      
+      const res = await api.get("/appointments");      
       // sort by datetime desc (newest first)
       const sorted = (res.data || []).sort(
         (a, b) => new Date(b.datetime) - new Date(a.datetime)
@@ -89,9 +89,9 @@ const Appointments = () => {
 
     try {
       if (editingId) {
-        await api.put(`/api/appointments/${editingId}`, payload);
+        await api.put(`/appointments/${editingId}`, payload);
       } else {
-        await api.post("/api/appointments", payload);
+        await api.post("/appointments", payload);
       }
       setForm({ petId: "", datetime: "", reason: "", notes: "", status: "Scheduled" });
       setEditingId(null);
@@ -118,7 +118,7 @@ const Appointments = () => {
     const ok = window.confirm("Delete this appointment?");
     if (!ok) return;
     try {
-      await api.delete(`/api/appointments/${id}`);
+      await api.delete(`/appointments/${id}`);
       fetchAppointments();
     } catch (error) {
       console.error("Error deleting appointment:", error);
