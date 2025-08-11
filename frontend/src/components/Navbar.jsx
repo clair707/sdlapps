@@ -36,12 +36,12 @@ const Navbar = () => {
                   Appointments
                 </NavLink>
                 {/* Keep existing Task CRUD link */}
-                <NavLink to="/tasks" className={navClass} aria-label="Task CRUD">
+                {/* <NavLink to="/tasks" className={navClass} aria-label="Task CRUD"> 
                   CRUD
                 </NavLink>
                 <NavLink to="/profile" className={navClass} aria-label="Profile">
                   Profile
-                </NavLink>
+                </NavLink>*/}
                 <button
                   onClick={handleLogout}
                   className="ml-1 bg-red-500/90 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-200"
