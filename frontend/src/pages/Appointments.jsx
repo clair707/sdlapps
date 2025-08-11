@@ -14,7 +14,7 @@ const Appointments = () => {
 
   // Fetch appointments from backend
   useEffect(() => {
-    fetchAppointments();
+    fetchAppointments();g
   }, []);
 
   const fetchAppointments = async () => {
