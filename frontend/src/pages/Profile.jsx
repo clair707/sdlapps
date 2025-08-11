@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
 
 const Profile = () => {
-  const { user } = useAuth(); // Access User Token from context
+  const { user } = useAuth(); // Access User Token From context
   const [formData, setFormData] = useState({
     name: '',
     email: '',
