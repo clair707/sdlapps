@@ -16,7 +16,7 @@ const Navbar = () => {
   const navClass = ({ isActive }) => `${baseLink} ${isActive ? active : inactive}`;
 
   return (
-    <nav className="bg-blue-600/90 backdrop-blur text-white">
+    <nav className="bg-gradient-to-b from-[#C8E6C9] via-[#A5D6A7] via-[#80CBC4] to-[#FFE0B2] backdrop-blur text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="h-16 flex items-center justify-between">
           {/* Brand */}
