@@ -21,7 +21,7 @@ const getAllPets = async (req, res) => {
     }
 };
 
-//Read one
+//Read
 const getPetById = async (req, res) => {
     try {
         const pet = await Pet.findById(req.params.id);
