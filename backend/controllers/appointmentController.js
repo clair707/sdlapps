@@ -11,7 +11,7 @@ const createAppointment = async (req, res) => {
     }
 }; 
 
-//Read all
+//Read All
 const getAllAppointments = async (req, res) => {
     try {
         const appointments = await Appointment.find();
