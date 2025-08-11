@@ -37,7 +37,14 @@ const Login = () => {
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
+        <button
+          type="submit"
+          className="w-full p-2 rounded"
+          style={{
+            backgroundColor: '#6A8F6B', 
+            color: '#F5E6CC' 
+          }}
+        >
           Login
         </button>
       </form>
