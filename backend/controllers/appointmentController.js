@@ -21,7 +21,7 @@ const getAllAppointments = async (req, res) => {
     }
 };
 
-//Read 
+//Read one
 const getAppointmentById = async (req, res) => {
     try {
         const appointment = await Appointment.findById(req.params.id);
