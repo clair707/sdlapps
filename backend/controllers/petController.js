@@ -1,6 +1,6 @@
 const Pet = require('../models/Pet');
 
-//create
+//Create
 const createPet = async (req, res) => {
     try {
         const pet = new Pet(req.body);
