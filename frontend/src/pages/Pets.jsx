@@ -156,7 +156,7 @@ const Pets = () => {
 
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          className="bg-[#064E3B] hover:bg-[#065F46] text-[#F5F5DC] px-4 py-2 rounded"
         >
           {editingId ? "Update Pet" : "Add Pet"}
         </button>
