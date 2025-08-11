@@ -24,7 +24,7 @@ const Navbar = () => {
             PetVet Care Manager
           </Link>
 
-          {/* Right side */}
+          {/* Right Side */}
           <div className="flex items-center gap-2 sm:gap-3">
             {user ? (
               <>
