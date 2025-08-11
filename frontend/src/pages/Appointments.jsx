@@ -6,6 +6,7 @@ const Appointments = () => {
   const [form, setForm] = useState({
     petName: "",
     ownerName: "",
+    vetName: "",
     date: "",
     time: "",
     reason: ""
@@ -29,26 +30,37 @@ const Appointments = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = {
+        petName: form.petName?.trim(),
+        ownerName: form.ownerName?.trim(),
+        vetName: form.vetName?.trim(),
+        date: form.date,
+        time: form.time,
+        reason: form.reason?.trim() || ""
+      };
+
       if (editingId) {
-        await axios.put(`/api/appointments/${editingId}`, form);
+        await axios.put(`/api/appointments/${editingId}`, payload);
       } else {
-        await axios.post("/api/appointments", form);
+        await axios.post("/api/appointments", payload);
       }
-      setForm({ petName: "", ownerName: "", date: "", time: "", reason: "" });
+      setForm({ petName: "", ownerName: "", vetName: "", date: "", time: "", reason: "" });
       setEditingId(null);
       fetchAppointments();
     } catch (error) {
-      console.error("Error saving appointment:", error);
+      console.error("Error saving appointment:", error.response?.data || error.message);
+      alert(typeof error.response?.data === "object" ? JSON.stringify(error.response.data) : (error.response?.data || error.message));
     }
   };
 
   const handleEdit = (appointment) => {
     setForm({
-      petName: appointment.petName,
-      ownerName: appointment.ownerName,
-      date: appointment.date,
-      time: appointment.time,
-      reason: appointment.reason
+      petName: appointment.petName || "",
+      ownerName: appointment.ownerName || "",
+      vetName: appointment.vetName || "",
+      date: appointment.date || "",
+      time: appointment.time || "",
+      reason: appointment.reason || ""
     });
     setEditingId(appointment._id);
   };
@@ -84,6 +96,14 @@ const Appointments = () => {
           className="w-full border p-2 rounded"
           value={form.ownerName}
           onChange={(e) => setForm({ ...form, ownerName: e.target.value })}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Vet Name"
+          className="w-full border p-2 rounded"
+          value={form.vetName}
+          onChange={(e) => setForm({ ...form, vetName: e.target.value })}
           required
         />
         <input
@@ -123,7 +143,7 @@ const Appointments = () => {
             className="p-3 border rounded flex justify-between items-center"
           >
             <span>
-              {appointment.petName} - {appointment.ownerName} -{" "}
+              {appointment.petName} - {appointment.ownerName} - {appointment.vetName} -{" "}
               {appointment.date} {appointment.time} - {appointment.reason}
             </span>
             <div className="space-x-2">
