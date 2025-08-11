@@ -6,7 +6,7 @@ const Pets = () => {
   const [form, setForm] = useState({ name: "", type: "", age: "" });
   const [editingId, setEditingId] = useState(null);
 
-  // Fetch Pets From backend
+  // Fetch Pets from backend
   useEffect(() => {
     fetchPets();
   }, []);
