@@ -14,7 +14,7 @@ const Appointments = () => {
   const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
-    fetchAppointments();g
+    fetchAppointments();
   }, []);
 
   const fetchAppointments = async () => {
