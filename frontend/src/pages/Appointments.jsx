@@ -12,7 +12,7 @@ const Appointments = () => {
   });
   const [editingId, setEditingId] = useState(null);
 
-  // Fetch appointments from backend
+  // Fetch Appointments from backend
   useEffect(() => {
     fetchAppointments();
   }, []);
