@@ -1,6 +1,6 @@
 const Pet = require('../models/Pet');
 
-//create
+//Create
 const createPet = async (req, res) => {
     try {
         const pet = new Pet(req.body);
@@ -21,7 +21,7 @@ const getAllPets = async (req, res) => {
     }
 };
 
-//Read one
+//Read One
 const getPetById = async (req, res) => {
     try {
         const pet = await Pet.findById(req.params.id);
