@@ -10,10 +10,9 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  const baseLink = 'px-3 py-2 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200';
-  const inactive = 'text-white/90 hover:text-white hover:bg-white/10';
-  const active = 'bg-white/15 text-white shadow-sm';
-  const navClass = ({ isActive }) => `${baseLink} ${isActive ? active : inactive}`;
+  // Unified button style for all navigation links and buttons
+  const navButtonClass =
+    'px-3 py-2 rounded-md text-sm font-medium bg-green-500/90 hover:bg-green-600 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-200';
 
   return (
     <nav className="bg-gradient-to-b from-[#C8E6C9] via-[#A5D6A7] via-[#80CBC4] to-[#FFE0B2] backdrop-blur text-white">
@@ -29,34 +28,34 @@ const Navbar = () => {
             {user ? (
               <>
                 {/* App navigation for authenticated users */}
-                <NavLink to="/pets" className={navClass} aria-label="Manage pets">
+                <NavLink to="/pets" className={navButtonClass} aria-label="Manage pets">
                   Pets
                 </NavLink>
-                <NavLink to="/appointments" className={navClass} aria-label="Manage appointments">
+                <NavLink to="/appointments" className={navButtonClass} aria-label="Manage appointments">
                   Appointments
                 </NavLink>
                 {/* Keep existing Task CRUD link */}
-                {/* <NavLink to="/tasks" className={navClass} aria-label="Task CRUD"> 
+                {/* <NavLink to="/tasks" className={navButtonClass} aria-label="Task CRUD"> 
                   CRUD
                 </NavLink>
-                <NavLink to="/profile" className={navClass} aria-label="Profile">
+                <NavLink to="/profile" className={navButtonClass} aria-label="Profile">
                   Profile
                 </NavLink>*/}
                 <button
                   onClick={handleLogout}
-                  className="ml-1 bg-red-500/90 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-200"
+                  className={navButtonClass}
                 >
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <NavLink to="/login" className={navClass} aria-label="Login">
+                <NavLink to="/login" className={navButtonClass} aria-label="Login">
                   Login
                 </NavLink>
                 <Link
                   to="/register"
-                  className="px-3 py-2 rounded-md text-sm font-medium bg-green-500/90 hover:bg-green-600 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-200"
+                  className={navButtonClass}
                   aria-label="Register"
                 >
                   Register
