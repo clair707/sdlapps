@@ -42,7 +42,10 @@ const Register = () => {
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
-        <button type="submit" className="w-full bg-green-600 text-white p-2 rounded">
+        <button
+          type="submit"
+          className="w-full bg-[#6A8F6B] text-[#F5E6CC] p-2 rounded hover:bg-[#58775A]"
+        >
           Register
         </button>
       </form>
