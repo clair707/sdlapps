@@ -20,7 +20,8 @@ const Pets = () => {
   const fetchPets = async () => {
     try {
       const res = await axiosInstance.get("/pets");
-      setPets(res.data || []);
+      const petList = Array.isArray(res.data) ? res.data : res.data?.pets || [];
+      setPets(petList);
     } catch (error) {
       console.error("Error fetching pets:", error);
       setErrorMsg(
