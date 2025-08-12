@@ -17,11 +17,9 @@ const Appointments = () => {
     fetchAppointments();
   }, []);
 
-  // Helpers to combine/split and format date/time
   const toIsoDateTime = (dateStr, timeStr) => {
     if (!dateStr) return "";
     const t = timeStr ? `${timeStr}:00` : "00:00:00";
-    // Construct in local time then convert to ISO
     const dt = new Date(`${dateStr}T${t}`);
     return dt.toISOString();
   };
@@ -54,10 +52,9 @@ const Appointments = () => {
       const payload = {
         petName: form.petName?.trim(),
         ownerName: form.ownerName?.trim(),
+        owner: form.ownerName?.trim(),
         vetName: form.vetName?.trim(),
-        // store combined ISO datetime into `date`
         date: toIsoDateTime(form.date, form.time),
-        // keep raw time as well (in case backend stores it separately)
         time: form.time,
         reason: form.reason?.trim(),
       };
@@ -86,7 +83,7 @@ const Appointments = () => {
   const handleEdit = (appointment) => {
     setForm({
       petName: appointment.petName || "",
-      ownerName: appointment.ownerName || "",
+      ownerName: appointment.ownerName || appointment.owner || appointment.owner_name || appointment.ownerFullName || "",
       vetName: appointment.vetName || "",
       date: toDateInput(appointment.date),
       time: toTimeInput(appointment.date, appointment.time),
@@ -241,7 +238,7 @@ const Appointments = () => {
                   <div>
                     <span className="font-medium">{appointment.petName}</span>
                     {" - "}
-                    <span>{appointment.ownerName}</span>
+                    <span>{appointment.ownerName || appointment.owner || appointment.owner_name || appointment.ownerFullName || "-"}</span>
                     {" - "}
                     <span>{appointment.vetName}</span>
                     {" - "}
