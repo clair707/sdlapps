@@ -19,7 +19,7 @@ const Pets = () => {
 
   const fetchPets = async () => {
     try {
-      const res = await axiosInstance.get("/pets");
+      const res = await axiosInstance.get("/api/pets");
       const petList = Array.isArray(res.data) ? res.data : res.data?.pets || [];
       setPets(petList);
     } catch (error) {
@@ -47,9 +47,9 @@ const Pets = () => {
 
     try {
       if (editingId) {
-        await axiosInstance.put(`/pets/${editingId}`, payload);
+        await axiosInstance.put(`/api/pets/${editingId}`, payload);
       } else {
-        await axiosInstance.post("/pets", payload);
+        await axiosInstance.post("/api/pets", payload);
       }
       setForm({ name: "", species: "", age: "", ownerName: "", ownerContact: "" });
       setEditingId(null);
@@ -79,7 +79,7 @@ const Pets = () => {
   const handleDelete = async (id) => {
     setErrorMsg("");
     try {
-      await axiosInstance.delete(`/pets/${id}`);
+      await axiosInstance.delete(`/api/pets/${id}`);
       fetchPets();
     } catch (error) {
       console.error("Error deleting pet:", error);
