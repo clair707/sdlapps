@@ -32,9 +32,44 @@ const Appointments = () => {
   const prettyTime = (iso, time) =>
     time || (iso ? new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "");
 
+  // Normalize owner name across possible shapes/keys
+  const getOwnerName = (a) => {
+    if (!a) return "";
+    // direct string fields
+    const direct =
+      a.ownerName ??
+      a.owner ??
+      a.owner_name ??
+      a.ownerFullName ??
+      a.owner_full_name ??
+      a.ownername;
+    if (typeof direct === "string" && direct.trim() !== "") return direct;
+    // nested objects
+    if (a.owner && typeof a.owner === "object") {
+      if (typeof a.owner.name === "string" && a.owner.name.trim() !== "") {
+        return a.owner.name;
+      }
+      if (typeof a.owner.fullName === "string" && a.owner.fullName.trim() !== "") {
+        return a.owner.fullName;
+      }
+    }
+    if (a.ownerDetails && typeof a.ownerDetails === "object") {
+      if (typeof a.ownerDetails.name === "string" && a.ownerDetails.name.trim() !== "") {
+        return a.ownerDetails.name;
+      }
+    }
+    if (a.owner_info && typeof a.owner_info === "object") {
+      if (typeof a.owner_info.name === "string" && a.owner_info.name.trim() !== "") {
+        return a.owner_info.name;
+      }
+    }
+    return "";
+  };
+
   const fetchAppointments = async () => {
     try {
       const res = await axios.get("/api/appointments");
+      console.log("Appointments fetched sample:", Array.isArray(res.data) ? res.data.slice(0, 2) : res.data);
       setAppointments(res.data);
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -83,7 +118,7 @@ const Appointments = () => {
   const handleEdit = (appointment) => {
     setForm({
       petName: appointment.petName || "",
-      ownerName: appointment.ownerName || appointment.owner || appointment.owner_name || appointment.ownerFullName || "",
+      ownerName: getOwnerName(appointment),
       vetName: appointment.vetName || "",
       date: toDateInput(appointment.date),
       time: toTimeInput(appointment.date, appointment.time),
@@ -238,7 +273,7 @@ const Appointments = () => {
                   <div>
                     <span className="font-medium">{appointment.petName}</span>
                     {" - "}
-                    <span>{appointment.ownerName || appointment.owner || appointment.owner_name || appointment.ownerFullName || "-"}</span>
+                    <span>{getOwnerName(appointment) || "-"}</span>
                     {" - "}
                     <span>{appointment.vetName}</span>
                     {" - "}
