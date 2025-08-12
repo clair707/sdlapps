@@ -3,7 +3,8 @@ const Appointment = require("../models/Appointment");
 //Create
 const createAppointment = async (req, res) => {
     try {
-        const appointment = new Appointment(req.body);
+        const { ownerName = "", ...otherFields } = req.body;
+        const appointment = new Appointment({ ownerName, ...otherFields });
         const savedAppointment = await appointment.save();
         res.status(201).json(savedAppointment);
     } catch (error) {
@@ -35,7 +36,9 @@ const getAppointmentById = async (req, res) => {
 //Update
 const updateAppointment = async (req, res) => {
     try {
-        const updatedAppointment = await Appointment.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { ownerName = "", ...otherFields } = req.body;
+        const updateData = { ownerName, ...otherFields };
+        const updatedAppointment = await Appointment.findByIdAndUpdate(req.params.id, updateData, { new: true });
         res.status(200).json(updatedAppointment);
     } catch (error) {
         res.status(400).json({ error: error.message });
