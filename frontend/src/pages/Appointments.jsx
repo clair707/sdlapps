@@ -93,9 +93,9 @@ const Appointments = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-white py-8 px-4">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold text-blue-700 mb-6">Appointments</h1>
+        <h1 className="text-2xl font-bold text-[#064E3B] mb-6">Appointments</h1>
         {/* Form Section */}
         <form
           className="bg-white shadow rounded p-6 mb-8 flex flex-col gap-4"

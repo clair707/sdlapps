@@ -100,7 +100,7 @@ const Pets = () => {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-blue-700 mb-4">Pet Management</h1>
+      <h1 className="text-2xl font-bold text-[#064E3B] mb-4">Pet Management</h1>
 
       {errorMsg && (
         <div className="mb-4 rounded border border-red-300 bg-red-50 p-3 text-red-700">
