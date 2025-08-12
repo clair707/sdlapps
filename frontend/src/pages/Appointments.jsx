@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from '../axiosConfig';
+
 
 const Appointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -68,7 +69,7 @@ const Appointments = () => {
 
   const fetchAppointments = async () => {
     try {
-      const res = await axios.get("/api/appointments");
+      const res = await axiosInstance.get("/api/appointments");
       console.log("Appointments fetched sample:", Array.isArray(res.data) ? res.data.slice(0, 2) : res.data);
       setAppointments(res.data);
     } catch (error) {
@@ -95,10 +96,10 @@ const Appointments = () => {
       };
 
       if (editingId) {
-        await axios.put(`/api/appointments/${editingId}`, payload);
+        await axiosInstance.put(`/api/appointments/${editingId}`, payload);
         setEditingId(null);
       } else {
-        await axios.post("/api/appointments", payload);
+        await axiosInstance.post("/api/appointments", payload);
       }
       setForm({
         petName: "",
@@ -130,7 +131,7 @@ const Appointments = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this appointment?")) return;
     try {
-      await axios.delete(`/api/appointments/${id}`);
+      await axiosInstance.delete(`/api/appointments/${id}`);
       fetchAppointments();
       // If deleting the appointment being edited, reset form
       if (editingId === id) {

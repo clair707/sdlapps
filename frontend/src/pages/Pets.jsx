@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-
-// Axios instance: base URL via Nginx proxy, attach token if present
-const api = axios.create({ baseURL: "/api" });
-api.interceptors.request.use((cfg) => {
-  const t = localStorage.getItem("token");
-  if (t) cfg.headers.Authorization = `Bearer ${t}`;
-  return cfg;
-});
+import axiosInstance from '../axiosConfig';
 
 const Pets = () => {
   const [pets, setPets] = useState([]);
@@ -27,7 +19,7 @@ const Pets = () => {
 
   const fetchPets = async () => {
     try {
-      const res = await api.get("/pets");
+      const res = await axiosInstance.get("/pets");
       setPets(res.data || []);
     } catch (error) {
       console.error("Error fetching pets:", error);
@@ -54,9 +46,9 @@ const Pets = () => {
 
     try {
       if (editingId) {
-        await api.put(`/pets/${editingId}`, payload);
+        await axiosInstance.put(`/pets/${editingId}`, payload);
       } else {
-        await api.post("/pets", payload);
+        await axiosInstance.post("/pets", payload);
       }
       setForm({ name: "", species: "", age: "", ownerName: "", ownerContact: "" });
       setEditingId(null);
@@ -86,7 +78,7 @@ const Pets = () => {
   const handleDelete = async (id) => {
     setErrorMsg("");
     try {
-      await api.delete(`/pets/${id}`);
+      await axiosInstance.delete(`/pets/${id}`);
       fetchPets();
     } catch (error) {
       console.error("Error deleting pet:", error);
