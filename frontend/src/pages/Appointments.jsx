@@ -17,6 +17,23 @@ const Appointments = () => {
     fetchAppointments();
   }, []);
 
+  // Helpers to combine/split and format date/time
+  const toIsoDateTime = (dateStr, timeStr) => {
+    if (!dateStr) return "";
+    const t = timeStr ? `${timeStr}:00` : "00:00:00";
+    // Construct in local time then convert to ISO
+    const dt = new Date(`${dateStr}T${t}`);
+    return dt.toISOString();
+  };
+  const toDateInput = (iso) =>
+    iso ? new Date(iso).toISOString().slice(0, 10) : "";
+  const toTimeInput = (iso, time) =>
+    time || (iso ? new Date(iso).toISOString().slice(11, 16) : "");
+  const prettyDate = (iso) =>
+    iso ? new Date(iso).toLocaleDateString() : "";
+  const prettyTime = (iso, time) =>
+    time || (iso ? new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "");
+
   const fetchAppointments = async () => {
     try {
       const res = await axios.get("/api/appointments");
@@ -34,13 +51,22 @@ const Appointments = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = {
+        petName: form.petName?.trim(),
+        ownerName: form.ownerName?.trim(),
+        vetName: form.vetName?.trim(),
+        // store combined ISO datetime into `date`
+        date: toIsoDateTime(form.date, form.time),
+        // keep raw time as well (in case backend stores it separately)
+        time: form.time,
+        reason: form.reason?.trim(),
+      };
+
       if (editingId) {
-        // Update appointment
-        await axios.put(`/api/appointments/${editingId}`, form);
+        await axios.put(`/api/appointments/${editingId}`, payload);
         setEditingId(null);
       } else {
-        // Create appointment
-        await axios.post("/api/appointments", form);
+        await axios.post("/api/appointments", payload);
       }
       setForm({
         petName: "",
@@ -62,8 +88,8 @@ const Appointments = () => {
       petName: appointment.petName || "",
       ownerName: appointment.ownerName || "",
       vetName: appointment.vetName || "",
-      date: appointment.date || "",
-      time: appointment.time || "",
+      date: toDateInput(appointment.date),
+      time: toTimeInput(appointment.date, appointment.time),
       reason: appointment.reason || "",
     });
     setEditingId(appointment._id);
@@ -220,7 +246,7 @@ const Appointments = () => {
                     <span>{appointment.vetName}</span>
                     {" - "}
                     <span>
-                      {appointment.date} {appointment.time}
+                      {prettyDate(appointment.date)} {prettyTime(appointment.date, appointment.time)}
                     </span>
                     {" - "}
                     <span>{appointment.reason}</span>
