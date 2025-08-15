@@ -8,3 +8,6 @@ https://github.com/clair707/sdlapps.git
 Username: clair
 Email: c@c.com
 Password: 12345
+
+**Important**
+If failed to login, please contact developer: xinzhuo.zhang@connect.qut.edu.au 
