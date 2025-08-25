@@ -33,7 +33,7 @@ const Appointments = () => {
   const prettyTime = (iso, time) =>
     time || (iso ? new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "");
 
-  // Normalize owner name across possible shapes/keys
+  // normalize owner name across possible shapes/keys
   const getOwnerName = (a) => {
     if (!a) return "";
     // direct string fields
