@@ -133,7 +133,7 @@ const Appointments = () => {
     try {
       await axiosInstance.delete(`/api/appointments/${id}`);
       fetchAppointments();
-      // If deleting the appointment being edited, reset form
+      // if deleting the appointment being edited, reset form
       if (editingId === id) {
         setEditingId(null);
         setForm({
